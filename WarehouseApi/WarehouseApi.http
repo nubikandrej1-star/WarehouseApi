@@ -1,0 +1,99 @@
+@WarehouseApi_HostAddress = https://localhost:56581
+
+### Список товарів із фільтрами
+GET {{WarehouseApi_HostAddress}}/api/pure-cqrs-demo?searchTerm=dell&onlyInStock=true
+Accept: application/json
+
+### Товар за ID
+GET {{WarehouseApi_HostAddress}}/api/pure-cqrs-demo/1
+Accept: application/json
+
+### Створити товар
+POST {{WarehouseApi_HostAddress}}/api/pure-cqrs-demo
+Content-Type: application/json
+
+{
+  "name": "USB-C Hub",
+  "sku": "HUB-USBC-001",
+  "description": "USB-C багатопортовий адаптер",
+  "price": 1499.00,
+  "stock": 10,
+  "category": "Accessories"
+}
+
+### Змінити залишок товару
+PATCH {{WarehouseApi_HostAddress}}/api/pure-cqrs-demo/1/stock
+Content-Type: application/json
+
+{
+  "quantityChange": -2,
+  "reason": "Внутрішнє списання"
+}
+
+### Видалити товар
+DELETE {{WarehouseApi_HostAddress}}/api/pure-cqrs-demo/999
+
+### Список активних постачальників
+GET {{WarehouseApi_HostAddress}}/api/suppliers?searchTerm=41234567&onlyActive=true
+Accept: application/json
+
+### Створити постачальника
+POST {{WarehouseApi_HostAddress}}/api/suppliers
+Content-Type: application/json
+
+{
+  "companyName": "ТОВ Електропостач",
+  "edrpouCode": "41234567",
+  "contactPerson": "Олена Коваль",
+  "phone": "+380501234567",
+  "email": "office@example.com",
+  "address": "м. Київ, вул. Прикладна, 10"
+}
+
+### Оформити поставку
+POST {{WarehouseApi_HostAddress}}/api/suppliers/restock
+Content-Type: application/json
+
+{
+  "supplierId": 1,
+  "productId": 1,
+  "quantity": 25,
+  "purchasePrice": 1200.00,
+  "invoiceNumber": "INV-2026/09-44"
+}
+
+
+### List shipments (supports status and recipient filters)
+GET {{WarehouseApi_HostAddress}}/api/shipments?status=Created&recipient=Olena
+Accept: application/json
+
+### Create a shipment (change ProductId to an existing product ID)
+POST {{WarehouseApi_HostAddress}}/api/shipments
+Content-Type: application/json
+
+{
+  "recipientName": "Olena Kovalenko",
+  "destinationAddress": "Kyiv, Khreshchatyk Street 1",
+  "productId": 1,
+  "quantity": 2
+}
+
+### Get a shipment by ID (replace 1 with the returned ID)
+GET {{WarehouseApi_HostAddress}}/api/shipments/1
+Accept: application/json
+
+### Move shipment to transit
+PUT {{WarehouseApi_HostAddress}}/api/shipments/1/status
+Content-Type: application/json
+
+{
+  "newStatus": "InTransit"
+}
+
+### Cancel shipment (restores product stock exactly once)
+PUT {{WarehouseApi_HostAddress}}/api/shipments/1/status
+Content-Type: application/json
+
+{
+  "newStatus": "Cancelled"
+}
